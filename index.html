@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="description" content="Portfólio de Germano Santos, estudante de Análise e Desenvolvimento de Sistemas.">
+   <link rel="stylesheet" href="css/style.css">
+   <title>Germano Santos | Portfólio</title>
+</head>
+<body>
+   <header>
+      <img src="img/bg-header.png" alt="Germano Santos Dev">
+   </header>
+
+   <nav id="nav-menu" aria-label="Menu principal">
+      <ul>
+         <li><a href="#inicio">Início</a></li>
+         <li><a href="#sobre">Sobre</a></li>
+         <li><a href="#habilidades">Habilidades</a></li>
+         <li><a href="#projetos">Projetos</a></li>
+         <li><a href="#contato">Contato</a></li>
+      </ul>
+   </nav>
+
+   <main>
+      <section id="inicio" class="hero">
+         <h1>Germano Santos</h1>
+         <p class="lead">Desenvolvedor Front-End em formação | HTML, CSS e JavaScript | Construindo interfaces modernas, funcionais e responsivas, criando experiências digitais que unem criatividade, performance e usabilidade.</p>
+         <div class="hero-acoes">
+            <a href="#projetos" class="btn btn-primario">Ver projetos</a>
+            <a href="#contato" class="btn btn-secundario">Falar comigo</a>
+         </div>
+      </section>
+
+      <section id="sobre" class="papel">
+         <h2><span class="prompt">&gt;</span> Sobre</h2>
+         <div class="duas-colunas">
+            <p>Sou Germano, estudante de ADS e criador da GS Interactive. Gosto de transformar ideias em sites, e de aprender a fazer cada coisa do começo ao fim.</p>
+            <p>Meu estilo mistura o sertão, o espírito pirata e o código: soluções simples, com identidade própria. Estou em busca de estágio e de projetos para crescer junto.</p>
+         </div>
+      </section>
+
+      <section id="habilidades">
+         <h2><span class="prompt">&gt;</span> Habilidades</h2>
+         <ul class="tags">
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JavaScript</li>
+            <li>Git e GitHub</li>
+            <li>Lógica de programação</li>
+         </ul>
+      </section>
+
+      <section id="projetos">
+         <h2><span class="prompt">&gt;</span> Projetos</h2>
+         <div id="filtros" class="filtros" role="group" aria-label="Filtrar projetos por tecnologia"></div>
+         <div id="lista-projetos" class="cards"></div>
+         <noscript><p class="aviso">Ative o JavaScript para ver a lista de projetos.</p></noscript>
+      </section>
+
+      <section id="contato">
+         <h2><span class="prompt">&gt;</span> Contato</h2>
+         <ul class="contatos">
+            <li><a class="btn btn-primario" href="mailto:seuemail@exemplo.com">E-mail</a></li>
+            <li><a class="btn btn-secundario" href="https://github.com/Ger7525" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a class="btn btn-secundario" href="https://www.linkedin.com/in/germano-santos-18569a384/" target="_blank" rel="noopener">LinkedIn</a></li>
+         </ul>
+      </section>
+   </main>
+
+   <footer>
+      <p>&copy; <span id="ano">2026</span> Germano Santos. GS interactive todos direitos reservados.</p>
+   </footer>
+
+   <dialog id="modal-projeto" aria-labelledby="modal-titulo"></dialog>
+
+   <script src="js/projetos.js"></script>
+   <script src="js/main.js"></script>
+</body>
+</html>
