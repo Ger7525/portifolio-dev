@@ -127,99 +127,123 @@ montarFiltros();
 mostrar("Todos");
 document.getElementById("ano").textContent = new Date().getFullYear();
 
-/* ---------- Banner: imagens dos projetos trocando sozinhas na área demarcada ---------- */
-function montarBanner() {
-  const header = document.querySelector("header");
+/* ---------- Vitrine: projetos em destaque, abaixo do menu ---------- */
+function montarVitrine() {
+  const alvo = document.getElementById("vitrine");
+  if (!alvo) return;
   const itens = projetos.flatMap(p => (p.imagens || []).map(src => ({ src, p })));
-  if (!itens.length) return;
+  if (!itens.length) { alvo.hidden = true; return; }
 
-  let imgBase = header.querySelector("img");
-  if (!imgBase) {
-    imgBase = document.createElement("img");
-    imgBase.src = "img/logo-dev.png";
-    imgBase.alt = "Germano Santos Dev";
-    imgBase.className = "base-logo";
-    header.appendChild(imgBase);
-  } else {
-    imgBase.classList.add("base-logo");
-  }
+  const janela = criar("div", "janela");
+  janela.setAttribute("role", "region");
+  janela.setAttribute("aria-roledescription", "carrossel");
+  janela.setAttribute("aria-label", "Projetos em destaque");
+  janela.tabIndex = -1;
 
-  header.classList.add("carrossel");
+  const barra = criar("div", "janela-barra");
+  const prompt = criar("span", "janela-titulo");
+  prompt.append(criar("span", "prompt", ">"), "projetos em destaque");
+  const contador = criar("span", "janela-contador");
+  contador.setAttribute("aria-hidden", "true");
+  barra.append(prompt, contador);
 
-  const area = criar("div", "banner");
-  area.setAttribute("role", "region");
-  area.setAttribute("aria-roledescription", "carrossel");
-  area.setAttribute("aria-label", "Imagens dos projetos");
-
+  const palco = criar("div", "palco");
   const slides = itens.map(({ src, p }) => {
-    const im = imagem(src, "Captura de tela do projeto " + p.titulo, "banner-slide");
-    area.appendChild(im);
+    const im = imagem(src, "Captura de tela do projeto " + p.titulo, "slide");
+    palco.appendChild(im);
     return im;
   });
+  const progresso = criar("span", "progresso");
+  palco.appendChild(progresso);
 
-  const legenda = criar("div", "banner-legenda");
-  const info = criar("div", "banner-info");
-  const titulo = criar("p", "banner-titulo");
+  const legenda = criar("div", "janela-legenda");
+  const info = criar("div", "janela-info");
+  const titulo = criar("h3", "janela-nome");
+  const status = criar("p", "status");
+  const resumo = criar("p", "janela-resumo");
+  info.append(titulo, status, resumo);
+
+  const acoes = criar("div", "janela-acoes");
   const abrir = criar("button", "btn-detalhes", "Ver detalhes");
   abrir.type = "button";
-  info.append(titulo, abrir);
-  legenda.appendChild(info);
+  acoes.appendChild(abrir);
 
-  let atual = 0, timer = null, pausado = false;
+  let atual = 0, timer = null, pausado = false, hover = false, foco = false;
   const reduzir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  pausado = reduzir;
   const pontos = [];
 
   function ir(i) {
     atual = (i + itens.length) % itens.length;
+    const { p } = itens[atual];
     slides.forEach((s, n) => {
       s.classList.toggle("ativo", n === atual);
       s.setAttribute("aria-hidden", n !== atual);
     });
     pontos.forEach((b, n) => b.setAttribute("aria-pressed", n === atual));
-    titulo.textContent = itens[atual].p.titulo;
+    contador.textContent = (atual + 1) + " / " + itens.length;
+    titulo.textContent = p.titulo;
+    status.className = "status status-" + p.status;
+    status.textContent = rotulos[p.status] || p.status;
+    resumo.textContent = p.descricao;
   }
-  function parar() { clearInterval(timer); }
   function iniciar() {
-    parar();
-    if (!reduzir && !pausado && itens.length > 1) timer = setInterval(() => ir(atual + 1), 5000);
+    clearInterval(timer);
+    progresso.style.animation = "none";
+    void progresso.offsetWidth;
+    progresso.style.animation = "";
+    const rodando = !pausado && !hover && !foco && itens.length > 1;
+    janela.classList.toggle("parado", !rodando);
+    if (rodando) timer = setInterval(() => { ir(atual + 1); iniciar(); }, 6000);
   }
+  function mover(i) { ir(i); iniciar(); }
 
   abrir.addEventListener("click", () => abrirModal(itens[atual].p));
 
   if (itens.length > 1) {
-    const controles = criar("div", "banner-controles");
-    const grupoPontos = criar("div", "ponto-grupo");
-    
+    const anterior = criar("button", "seta seta-anterior", "\u2039");
+    const proximo = criar("button", "seta seta-proximo", "\u203A");
+    anterior.type = proximo.type = "button";
+    anterior.setAttribute("aria-label", "Projeto anterior");
+    proximo.setAttribute("aria-label", "Próximo projeto");
+    anterior.addEventListener("click", () => mover(atual - 1));
+    proximo.addEventListener("click", () => mover(atual + 1));
+    palco.append(anterior, proximo);
+
+    const grupo = criar("div", "ponto-grupo");
     itens.forEach((_, n) => {
       const b = criar("button", "ponto");
       b.type = "button";
       b.setAttribute("aria-label", "Ir para a imagem " + (n + 1));
-      b.addEventListener("click", () => { ir(n); iniciar(); });
+      b.addEventListener("click", () => mover(n));
       pontos.push(b);
-      grupoPontos.appendChild(b);
+      grupo.appendChild(b);
     });
-    
-    controles.appendChild(grupoPontos);
-    const pausa = criar("button", "btn-pausa", reduzir ? "Reproduzir" : "Pausar");
+    const pausa = criar("button", "btn-pausa", pausado ? "Reproduzir" : "Pausar");
     pausa.type = "button";
-    pausado = reduzir;
     pausa.addEventListener("click", () => {
       pausado = !pausado;
       pausa.textContent = pausado ? "Reproduzir" : "Pausar";
       iniciar();
     });
-    controles.appendChild(pausa);
-    legenda.appendChild(controles);
-    
-    area.addEventListener("mouseenter", parar);
-    area.addEventListener("mouseleave", iniciar);
-    area.addEventListener("focusin", parar);
-    area.addEventListener("focusout", iniciar);
+    acoes.append(grupo, pausa);
+
+    janela.addEventListener("mouseenter", () => { hover = true; iniciar(); });
+    janela.addEventListener("mouseleave", () => { hover = false; iniciar(); });
+    janela.addEventListener("focusin", () => { foco = true; iniciar(); });
+    janela.addEventListener("focusout", e => {
+      if (!janela.contains(e.relatedTarget)) { foco = false; iniciar(); }
+    });
+    janela.addEventListener("keydown", e => {
+      if (e.key === "ArrowLeft") mover(atual - 1);
+      if (e.key === "ArrowRight") mover(atual + 1);
+    });
   }
 
-  area.appendChild(legenda);
-  header.appendChild(area);
+  legenda.append(info, acoes);
+  janela.append(barra, palco, legenda);
+  alvo.appendChild(janela);
   ir(0);
   iniciar();
 }
-montarBanner();
+montarVitrine();

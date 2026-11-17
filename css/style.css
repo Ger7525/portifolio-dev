@@ -220,61 +220,102 @@ dialog > * + * { margin-top: .9rem; }
 .miniatura:hover { opacity: 1; }
 .miniatura[aria-pressed="true"] { opacity: 1; border-color: var(--cor-destaque-terminal); }
 
-/* ---------- Banner com imagens dos projetos na área demarcada ---------- */
-header.carrossel { 
-  background-image: url('../img/logo-dev.png');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
+/* ---------- Vitrine: janela de terminal com xilogravura ---------- */
+.vitrine { padding-top: 2.5rem; padding-bottom: 2rem; }
+.janela {
+  max-width: 980px; margin: 0 auto; overflow: hidden;
+  background: var(--cor-fundo-secundario);
+  border: 2px solid var(--cor-papel-xilo); border-radius: 6px;
+  box-shadow: 10px 10px 0 var(--cor-destaque-sertao-escuro);
 }
-header.carrossel > img.base-logo {
-  visibility: hidden;
-  pointer-events: none;
+.janela-barra {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: .55rem 1rem; line-height: 1.4;
+  background: var(--cor-papel-xilo); color: var(--cor-tinta-nanquim);
+  border-bottom: 2px solid var(--cor-tinta-nanquim);
+  font-family: var(--fonte-subtitulo); font-weight: 600; font-size: .85rem;
 }
-.banner {
-  position: absolute; 
-  top: 4.8%;
-  right: 3.2%;
-  width: 37.8%;
-  height: 69.5%;
-  overflow: hidden;
-  background: var(--cor-fundo-principal);
-  border-radius: 4px;
-}
-.banner-slide {
+.janela-barra .prompt { color: var(--cor-destaque-sertao-escuro); }
+.janela-contador { font-weight: 400; color: var(--cor-texto-sobre-papel); }
+
+.palco { position: relative; aspect-ratio: 16 / 9; background: var(--cor-fundo-principal); overflow: hidden; }
+.slide {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; object-position: top center;
-  opacity: 0; transition: opacity .8s ease;
+  opacity: 0; transition: opacity .9s ease;
 }
-.banner-slide.ativo { opacity: 1; }
-.banner-legenda {
-  position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 1.5rem 0.8rem 0.8rem;
-  background: linear-gradient(to top, rgba(12,14,18,.95), rgba(12,14,18,0));
-  display: flex; flex-direction: column; gap: 0.5rem; justify-content: flex-end;
+.slide.ativo { opacity: 1; animation: aproximar 9s ease-out both; }
+@keyframes aproximar { from { transform: scale(1.06); } to { transform: scale(1); } }
+
+.progresso {
+  position: absolute; left: 0; bottom: 0; height: 4px; width: 100%;
+  background: var(--cor-destaque-terminal);
+  transform-origin: left; transform: scaleX(0);
+  animation: progresso 6s linear forwards;
 }
-.banner-info { display: flex; flex-direction: column; gap: 0.4rem; }
-.banner-titulo { font-family: var(--fonte-subtitulo); font-weight: 700; font-size: 0.85rem; color: var(--cor-papel-xilo); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.banner-controles { display: flex; align-items: center; justify-content: space-between; gap: .4rem; }
-.banner-controles .ponto-grupo { display: flex; gap: 4px; align-items: center; }
+.janela.parado .progresso { animation: none; }
+@keyframes progresso { to { transform: scaleX(1); } }
+
+.seta {
+  position: absolute; top: 50%; translate: 0 -50%;
+  width: 44px; height: 44px; display: grid; place-items: center; padding-bottom: 4px;
+  font-size: 2rem; line-height: 1; cursor: pointer;
+  background: rgba(12,14,18,.7); color: var(--cor-papel-xilo);
+  border: 2px solid var(--cor-papel-xilo); border-radius: 50%;
+  transition: background-color .3s ease, color .3s ease;
+}
+.seta-anterior { left: 1rem; }
+.seta-proximo { right: 1rem; }
+.seta:hover { background: var(--cor-papel-xilo); color: var(--cor-texto-invertido); }
+
+.janela-legenda {
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 1.5rem; flex-wrap: wrap;
+  padding: 1.2rem 1.5rem 1.4rem; line-height: 1.6;
+}
+.janela-info { flex: 1 1 320px; min-width: 0; }
+.janela-nome { font-size: 1.1rem; }
+.janela-legenda .status { font-family: var(--fonte-menu); font-size: .8rem; }
+.janela-resumo {
+  margin-top: .3rem; max-width: 70ch; color: var(--cor-texto-secundario); font-size: .95rem;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.janela-acoes { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.ponto-grupo { display: flex; gap: 6px; align-items: center; }
 .ponto {
-  width: 8px; height: 8px; padding: 0; cursor: pointer;
+  width: 10px; height: 10px; padding: 0; cursor: pointer;
   border-radius: 50%; border: 1px solid var(--cor-papel-xilo); background: transparent;
   transition: background-color .3s ease;
 }
 .ponto[aria-pressed="true"] { background: var(--cor-destaque-terminal); border-color: var(--cor-destaque-terminal); }
 .btn-pausa {
-  font-family: var(--fonte-menu); font-weight: 700; font-size: 0.7rem;
-  background: transparent; color: var(--cor-papel-xilo);
-  border: 1px solid var(--cor-papel-xilo); border-radius: 4px;
-  padding: .1rem .4rem; cursor: pointer;
+  font-family: var(--fonte-menu); font-weight: 700; font-size: .8rem;
+  background: transparent; color: var(--cor-texto-secundario);
+  border: 1px solid var(--cor-borda-sutil); border-radius: 4px;
+  padding: .25rem .7rem; cursor: pointer;
 }
-.btn-pausa:hover { background: var(--cor-papel-xilo); color: var(--cor-texto-invertido); }
-.banner-legenda .btn-detalhes {
-  font-size: 0.75rem;
-  padding: 0.2rem 0.6rem;
-  align-self: flex-start;
+.btn-pausa:hover { color: var(--cor-texto-principal); border-color: var(--cor-texto-secundario); }
+
+/* ---------- Sobre: texto e xilogravura do Pirata Dev ---------- */
+.sobre-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 2.5rem; align-items: center; }
+.sobre-textos { display: grid; gap: 1.2rem; }
+.sobre-textos p { max-width: 52ch; }
+.sobre-figura { margin: 0; line-height: 1.4; }
+.sobre-figura img {
+  display: block; width: 100%; height: auto;
+  mix-blend-mode: multiply; /* o fundo branco da gravura se funde ao papel */
+  border: 3px double var(--cor-tinta-nanquim); padding: 6px;
 }
-header.carrossel + #nav-menu ul {
-  box-shadow: 0 8px 24px rgba(0,0,0,.45), 0 0 0 4px var(--cor-fundo-principal);
+.sobre-figura figcaption {
+  margin-top: .6rem; text-align: right;
+  font-family: var(--fonte-subtitulo); font-size: .8rem; color: var(--cor-texto-sobre-papel);
+}
+@media (max-width: 800px) {
+  .sobre-layout { grid-template-columns: 1fr; }
+  .janela { box-shadow: 6px 6px 0 var(--cor-destaque-sertao-escuro); }
+  .seta { width: 36px; height: 36px; font-size: 1.6rem; }
+  .seta-anterior { left: .5rem; } .seta-proximo { right: .5rem; }
+  .janela-legenda { padding: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide.ativo, .progresso { animation: none; }
 }
